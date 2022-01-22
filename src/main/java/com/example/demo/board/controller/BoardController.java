@@ -43,4 +43,11 @@ public class BoardController {
         model.addAttribute("post", boardDto);
         return "board/detail";
     }
+
+    @GetMapping("/post/edit/{id}")
+    public String edit(@PathVariable("id") Long id, Model model){
+        BoardDto boardDto = boardService.getPost(id);
+        model.addAttribute("post", boardDto);
+        return "board/edit.html";
+    }
 }
