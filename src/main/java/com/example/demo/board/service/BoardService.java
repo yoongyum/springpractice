@@ -54,4 +54,10 @@ public class BoardService {
                 .build();
         return boardDto;
     }
+    
+    //글 조회페이지에서 삭제할시 Delete 요청
+    @Transactional
+    public void deletePost(Long id){
+        boardRepository.deleteById(id);
+    }
 }
