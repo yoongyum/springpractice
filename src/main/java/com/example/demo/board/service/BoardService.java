@@ -42,7 +42,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardDto getPost(Long id){
+    public BoardDto getPost(Long id) {
         Board board = boardRepository.findById(id).get();
 
         BoardDto boardDto = BoardDto.builder()
@@ -50,6 +50,7 @@ public class BoardService {
                 .author(board.getAuthor())
                 .title(board.getTitle())
                 .content(board.getContent())
+                .fileId(board.getFileId())
                 .createdDate(board.getCreatedDate())
                 .build();
         return boardDto;
