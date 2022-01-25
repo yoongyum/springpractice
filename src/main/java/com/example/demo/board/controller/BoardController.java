@@ -5,12 +5,21 @@ import com.example.demo.board.dto.FileDto;
 import com.example.demo.board.service.BoardService;
 import com.example.demo.board.service.FileService;
 import com.example.demo.board.util.MD5Generator;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -68,7 +77,7 @@ public class BoardController {
         return "redirect:/";
     }
 
-    //
+    //글보기
     @GetMapping("/post/{id}")
     public String detail(@PathVariable("id") Long id, Model model){
         BoardDto boardDto = boardService.getPost(id);
@@ -81,7 +90,7 @@ public class BoardController {
     public String edit(@PathVariable("id") Long id, Model model){
         BoardDto boardDto = boardService.getPost(id);
         model.addAttribute("post", boardDto);
-        return "board/edit.html";
+        return "board/edit";
     }
     
     //수정시 데이터 저장
@@ -97,4 +106,14 @@ public class BoardController {
         return "redirect:/";
     }
 
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity<Resource> fileDownload(@PathVariable("fileId") Long fileId) throws IOException{
+        FileDto fileDto = fileService.getFile(fileId);
+        Path path = Paths.get(fileDto.getFilePath());
+        Resource resource = new InputStreamResource(Files.newInputStream(path));
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+fileDto.getOrigFilename()+"\"")
+                .body(resource);
+    }
 }
